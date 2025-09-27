@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bupt.goodservice.mapper.UserMapper">
+
+    <select id="findByUsername" resultType="bupt.goodservice.model.User">
+        SELECT * FROM user WHERE username = #{username}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (username, password, user_type, name, phone, profile, created_time, updated_time)
+        VALUES (#{username}, #{password}, #{userType}, #{name}, #{phone}, #{profile}, #{createdTime}, #{updatedTime})
+    </insert>
+
+    <update id="update">
+        UPDATE user
+        <set>
+            <if test="password != null">password = #{password},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="profile != null">profile = #{profile},</if>
+            updated_time = #{updatedTime}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="findAll" resultType="bupt.goodservice.model.User">
+        SELECT * FROM user
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+</mapper>

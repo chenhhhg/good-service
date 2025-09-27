@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bupt.goodservice.mapper.ServiceRequestMapper">
+
+    <resultMap id="ServiceRequestResult" type="bupt.goodservice.model.ServiceRequest">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="regionId" column="region_id"/>
+        <result property="serviceType" column="service_type"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="imageFiles" column="image_files"/>
+        <result property="videoFile" column="video_file"/>
+        <result property="createdAt" column="create_time"/>
+        <result property="updatedAt" column="update_time"/>
+        <result property="status" column="status" javaType="bupt.goodservice.model.enums.ServiceRequestStatus"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO service_request (user_id, region_id, service_type, title, description, image_files, video_file, create_time, update_time, status)
+        VALUES (#{userId}, #{regionId}, #{serviceType}, #{title}, #{description}, #{imageFiles}, #{videoFile}, #{createdAt}, #{updatedAt}, #{status})
+    </insert>
+
+    <select id="findById" resultMap="ServiceRequestResult">
+        SELECT * FROM service_request WHERE id = #{id}
+    </select>
+    
+    <select id="findByUserId" resultMap="ServiceRequestResult">
+        SELECT * FROM service_request WHERE user_id = #{userId}
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="findAll" resultMap="ServiceRequestResult">
+        SELECT * FROM service_request
+        <where>
+            <if test="serviceType != null and serviceType != ''">
+                AND service_type LIKE CONCAT('%', #{serviceType}, '%')
+            </if>
+            <if test="regionId != null">
+                AND region_id = #{regionId}
+            </if>
+        </where>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <update id="update">
+        UPDATE service_request
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = #{updatedAt}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM service_request WHERE id = #{id}
+    </delete>
+
+</mapper>

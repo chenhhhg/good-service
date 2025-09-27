@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bupt.goodservice.mapper.ServiceResponseMapper">
+
+    <resultMap id="ServiceResponseResult" type="bupt.goodservice.model.ServiceResponse">
+        <id property="id" column="id"/>
+        <result property="requestId" column="request_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="description" column="description"/>
+        <result property="imageFiles" column="image_files"/>
+        <result property="createdAt" column="create_time"/>
+        <result property="updatedAt" column="update_time"/>
+        <result property="status" column="status" javaType="bupt.goodservice.model.enums.ServiceResponseStatus"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO service_response (request_id, user_id, description, image_files, create_time, update_time, status)
+        VALUES (#{requestId}, #{userId}, #{description}, #{imageFiles}, #{createdAt}, #{updatedAt}, #{status})
+    </insert>
+
+    <select id="findById" resultMap="ServiceResponseResult">
+        SELECT * FROM service_response WHERE id = #{id}
+    </select>
+    
+    <select id="findByRequestId" resultMap="ServiceResponseResult">
+        SELECT * FROM service_response WHERE request_id = #{requestId}
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="findByUserId" resultMap="ServiceResponseResult">
+        SELECT * FROM service_response WHERE user_id = #{userId}
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="findAll" resultMap="ServiceResponseResult">
+        SELECT * FROM service_response
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <update id="update">
+        UPDATE service_response
+        <set>
+            <if test="description != null">description = #{description},</if>
+            <if test="imageFiles != null">image_files = #{imageFiles},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = #{updatedAt}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM service_response WHERE id = #{id}
+    </delete>
+
+</mapper>
