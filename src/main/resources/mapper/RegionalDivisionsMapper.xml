@@ -20,6 +20,11 @@
         updated_time
     </sql>
 
+    <select id="selectAll" resultType="long">
+        select id
+        from regional_divisions
+    </select>
+
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

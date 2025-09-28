@@ -2,6 +2,8 @@ package bupt.goodservice.mapper;
 
 import bupt.goodservice.model.RegionalDivisions;
 
+import java.util.List;
+
 /**
  * @author 86157
  * @description 针对表【regional_divisions(中国行政区划表-市级)】的数据库操作Mapper
@@ -9,6 +11,7 @@ import bupt.goodservice.model.RegionalDivisions;
  * @Entity bupt.goodservice.model.RegionalDivisions
  */
 public interface RegionalDivisionsMapper {
+    List<Long> selectAll();
 
     int deleteByPrimaryKey(Long id);
 

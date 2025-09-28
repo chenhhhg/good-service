@@ -29,6 +29,7 @@ public class StatsController {
             @RequestParam(required = false) String region,
             @RequestParam(required = false, defaultValue = "false") boolean success) {
         List<MonthlyStats> stats = statsService.getMonthlyStats(startMonth, endMonth, region, success);
+
         return ResponseEntity.ok(stats);
     }
 }

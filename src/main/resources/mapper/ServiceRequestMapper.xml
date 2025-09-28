@@ -16,6 +16,11 @@
         <result property="status" column="status" javaType="bupt.goodservice.model.enums.ServiceRequestStatus"/>
     </resultMap>
 
+    <select id="selectAll" resultType="long">
+        select id
+        from service_request
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO service_request (user_id, region_id, service_type, title, description, image_files, video_file, create_time, update_time, status)
         VALUES (#{userId}, #{regionId}, #{serviceType}, #{title}, #{description}, #{imageFiles}, #{videoFile}, #{createdAt}, #{updatedAt}, #{status})

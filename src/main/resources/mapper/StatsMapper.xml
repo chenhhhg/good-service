@@ -3,9 +3,16 @@
 <mapper namespace="bupt.goodservice.mapper.StatsMapper">
 
     <resultMap id="MonthlyStatsResultMap" type="bupt.goodservice.dto.MonthlyStats">
-        <!-- 基本字段映射 - 这些来自聚合查询结果 -->
-        <result property="month" column="stat_month" jdbcType="VARCHAR"/>
-        <result property="serviceType" column="service_type" jdbcType="VARCHAR"/>
+        <!-- 
+            为 MonthlyStats 对象定义一个复合主键。
+            根据 GROUP BY 子句，(月份 + 服务类型 + 地域ID) 构成了一个唯一的结果行。
+            这会告诉 MyBatis 将每一行都映射为一个独立的 MonthlyStats 对象，而不是根据 region_id 进行合并。
+        -->
+        <id property="month" column="month"/>
+        <id property="serviceType" column="service_type"/>
+        <id property="region.id" column="region_id"/>
+
+        <!-- 'column' 属性必须与 SQL 查询中的别名完全匹配 -->
         <result property="requestCount" column="total_requests" jdbcType="BIGINT"/>
         <result property="successCount" column="successful_requests" jdbcType="BIGINT"/>
 
@@ -19,7 +26,7 @@
         </association>
     </resultMap>
 
-    <select id="getMonthlyStatsTotal" resultType="bupt.goodservice.dto.MonthlyStats">
+    <select id="getMonthlyStatsTotal" resultMap="MonthlyStatsResultMap">
         SELECT
         DATE_FORMAT(rq.create_time, '%Y-%m') AS month,
         rd.id as region_id,
@@ -27,9 +34,9 @@
         rd.regional_name,
         rd.city_name,
         rd.province_name,
-        rq.service_type AS serviceType,
-        service_type,
-        COUNT(DISTINCT rq.id) AS requestCount
+        rq.service_type,
+        COUNT(DISTINCT rq.id) AS total_requests,
+        COUNT(DISTINCT CASE WHEN rp.status = 1 THEN rq.id END) AS successful_requests
         FROM
         service_request rq
         LEFT JOIN
@@ -37,7 +44,7 @@
         JOIN
         regional_divisions rd ON rq.region_id = rd.id
         <where>
-            AND rq.create_time >= #{first}
+            rq.create_time >= #{first}
             AND rq.create_time &lt;= #{last}
             <if test="region != null and region != ''">
                 AND (
@@ -45,12 +52,9 @@
                 OR rd.province_name LIKE CONCAT('%', #{region}, '%')
                 )
             </if>
-            <if test="success">
-                AND rq.status = 1
-            </if>
         </where>
         GROUP BY
-        month, serviceType, rd.id
+        month, rq.service_type, rd.id
         ORDER BY
         month desc
     </select>

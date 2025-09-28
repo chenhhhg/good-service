@@ -63,7 +63,6 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
         existingRequest.setTitle(serviceRequest.getTitle());
         existingRequest.setDescription(serviceRequest.getDescription());
         existingRequest.setUpdatedAt(LocalDateTime.now());
-        // Potentially update other fields
         
         serviceRequestMapper.update(existingRequest);
         return existingRequest;

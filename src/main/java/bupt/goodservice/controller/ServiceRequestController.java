@@ -4,6 +4,7 @@ import bupt.goodservice.aspect.CheckOwnership;
 import bupt.goodservice.model.ServiceRequest;
 import bupt.goodservice.model.enums.ServiceType;
 import bupt.goodservice.service.ServiceRequestService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class ServiceRequestController {
     private ServiceRequestService serviceRequestService;
 
     @PostMapping
-    public ResponseEntity<ServiceRequest> createRequest(@RequestBody ServiceRequest serviceRequest) {
+    public ResponseEntity<ServiceRequest> createRequest(@Valid @RequestBody ServiceRequest serviceRequest) {
         ServiceRequest createdRequest = serviceRequestService.createServiceRequest(serviceRequest);
         return ResponseEntity.ok(createdRequest);
     }

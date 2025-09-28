@@ -147,3 +147,4 @@ public class StatsControllerTest {
                 .andExpect(jsonPath("$[0].requestCount").value(2));
     }
 }
+

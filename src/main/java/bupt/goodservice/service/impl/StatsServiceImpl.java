@@ -26,7 +26,6 @@ public class StatsServiceImpl implements StatsService {
         }
         LocalDateTime start = startMonth.atDay(1).atStartOfDay();
         LocalDateTime end = endMonth.atEndOfMonth().atTime(23, 59, 59, 999000000);
-        List<MonthlyStats> monthlyStats = statsMapper.getMonthlyStatsTotal(start, end, region, success);
-        return monthlyStats;
+        return statsMapper.getMonthlyStatsTotal(start, end, region, success);
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
+    List<Long> selectAll();
     User findByUsername(String username);
     void insert(User user);
     void update(User user);
