@@ -21,7 +21,15 @@
     <select id="findById" resultMap="ServiceResponseResult">
         SELECT * FROM service_response WHERE id = #{id}
     </select>
-    
+
+    <select id="findByIdForUpdate" resultMap="ServiceResponseResult">
+        SELECT *
+        FROM service_response
+        WHERE id = #{id} for
+        update
+    </select>
+
+
     <select id="findByRequestId" resultMap="ServiceResponseResult">
         SELECT * FROM service_response WHERE request_id = #{requestId}
         LIMIT #{pageSize} OFFSET #{offset}

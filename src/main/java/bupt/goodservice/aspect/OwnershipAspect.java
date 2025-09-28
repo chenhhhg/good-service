@@ -32,7 +32,7 @@ public class OwnershipAspect {
             throw new SecurityException("User not authenticated.");
         }
 
-        Long resourceId = (Long) joinPoint.getArgs()[0]; // Assume resource ID is the first argument
+        Long resourceId = (Long) joinPoint.getArgs()[0]; // 要修改的资源ID
 
         boolean isOwner = switch (checkOwnership.resourceType()) {
             case "ServiceRequest" -> {

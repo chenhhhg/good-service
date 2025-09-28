@@ -4,10 +4,12 @@ import bupt.goodservice.mapper.ServiceRequestMapper;
 import bupt.goodservice.mapper.ServiceResponseMapper;
 import bupt.goodservice.model.ServiceRequest;
 import bupt.goodservice.model.ServiceResponse;
+import bupt.goodservice.model.enums.ServiceRequestStatus;
 import bupt.goodservice.model.enums.ServiceResponseStatus;
 import bupt.goodservice.service.ServiceResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -89,31 +91,41 @@ public class ServiceResponseServiceImpl implements ServiceResponseService {
             throw new IllegalStateException("Cannot delete a response that has already been actioned upon.");
         }
 
-        serviceResponseMapper.delete(id);
+        existingResponse.setStatus(ServiceResponseStatus.CANCELLED);
+        serviceResponseMapper.update(existingResponse);
+//        serviceResponseMapper.delete(id);
     }
 
     @Override
-    public ServiceResponse updateResponseStatus(Long responseId, ServiceResponseStatus status, Long currentUserId) {
+    @Transactional
+    public ServiceResponse acceptOrRejectResponse(Long responseId, Long requestId, ServiceResponseStatus status, Long currentUserId) {
+        //锁上需求
+        ServiceRequest serviceRequest = serviceRequestMapper.findByIdForUpdate(requestId);
+        if (serviceRequest == null) {
+            throw new RuntimeException("需求不存在");
+        }
         ServiceResponse serviceResponse = serviceResponseMapper.findById(responseId);
         if (serviceResponse == null) {
-            throw new RuntimeException("ServiceResponse not found with id: " + responseId);
+            throw new RuntimeException("响应不存在: " + responseId);
         }
-
-        ServiceRequest serviceRequest = serviceRequestMapper.findById(serviceResponse.getRequestId());
-        if (serviceRequest == null) {
-            throw new RuntimeException("Associated ServiceRequest not found");
-        }
-
-        // Check if the current user is the owner of the service request
         if (!serviceRequest.getUserId().equals(currentUserId)) {
-            throw new SecurityException("Only the owner of the service request can accept or reject responses.");
+            throw new SecurityException("仅需求拥有者可接受或拒绝");
         }
-
-        // Further logic can be added here, e.g., only one response can be accepted.
-
+        if (serviceRequest.getStatus() != ServiceRequestStatus.PUBLISHED) {
+            throw new RuntimeException("该需求已完成或已取消，无法修改！");
+        }
+        if (serviceResponse.getStatus() != ServiceResponseStatus.PENDING) {
+            throw new RuntimeException("该响应已拒绝或已取消，无法修改！");
+        }
+        // accept or reject
         serviceResponse.setStatus(status);
         serviceResponse.setUpdatedAt(LocalDateTime.now());
         serviceResponseMapper.update(serviceResponse);
+
+        if (status == ServiceResponseStatus.ACCEPTED) {
+            serviceRequest.setStatus(ServiceRequestStatus.COMPLETED);
+            serviceRequestMapper.update(serviceRequest);
+        }
 
         return serviceResponse;
     }

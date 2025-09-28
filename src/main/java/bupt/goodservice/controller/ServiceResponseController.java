@@ -5,15 +5,17 @@ import bupt.goodservice.model.ServiceResponse;
 import bupt.goodservice.model.enums.ServiceResponseStatus;
 import bupt.goodservice.service.ServiceResponseService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/responses")
+@Slf4j
 public class ServiceResponseController {
 
     @Autowired
@@ -68,14 +70,18 @@ public class ServiceResponseController {
     }
     
     @PatchMapping("/{id}/status")
-    public ResponseEntity<ServiceResponse> updateStatus(
+    public ResponseEntity<ServiceResponse> acceptOrRejectResponse(
             @PathVariable Long id,
-            @RequestBody Map<String, String> statusUpdate,
+            @RequestParam("rId") Long requestId,
+            @RequestParam("ts") Integer targetStatus,
             HttpServletRequest request) {
         Long currentUserId = (Long) request.getAttribute("userId");
-        ServiceResponseStatus newStatus = ServiceResponseStatus.valueOf(statusUpdate.get("status").toUpperCase());
-        
-        ServiceResponse updatedResponse = serviceResponseService.updateResponseStatus(id, newStatus, currentUserId);
+        ServiceResponse updatedResponse;
+        try {
+            updatedResponse = serviceResponseService.acceptOrRejectResponse(id, requestId, ServiceResponseStatus.fromValue(targetStatus), currentUserId);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).build();
+        }
         return ResponseEntity.ok(updatedResponse);
     }
 }

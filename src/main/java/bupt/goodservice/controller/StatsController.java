@@ -1,5 +1,6 @@
 package bupt.goodservice.controller;
 
+import bupt.goodservice.aspect.CheckIfAdmin;
 import bupt.goodservice.dto.MonthlyStats;
 import bupt.goodservice.service.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +22,13 @@ public class StatsController {
     private StatsService statsService;
 
     @GetMapping("/monthly")
+    @CheckIfAdmin
     public ResponseEntity<List<MonthlyStats>> getMonthlyStats(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth startMonth,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth endMonth,
             @RequestParam(required = false) String region,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(defaultValue = "asc") String sortOrder) {
-        
-        // In a real app, an AOP aspect or Spring Security would check for ADMIN role here.
-        
-        List<MonthlyStats> stats = statsService.getMonthlyStats(startMonth, endMonth, region, sortBy, sortOrder);
+            @RequestParam(required = false, defaultValue = "false") boolean success) {
+        List<MonthlyStats> stats = statsService.getMonthlyStats(startMonth, endMonth, region, success);
         return ResponseEntity.ok(stats);
     }
 }

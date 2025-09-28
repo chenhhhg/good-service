@@ -3,6 +3,7 @@ package bupt.goodservice;
 import bupt.goodservice.dto.JwtResponse;
 import bupt.goodservice.dto.RegisterRequest;
 import bupt.goodservice.model.ServiceRequest;
+import bupt.goodservice.service.ServiceRequestService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,9 @@ class ServiceRequestControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private ServiceRequestService serviceRequestService;
 
     private String userAToken;
     private String userBToken;
@@ -55,8 +59,8 @@ class ServiceRequestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerRequest)))
                 .andReturn();
-        // Extract user ID from response if needed, for simplicity we get it later or assume it
-        return 1L; // Placeholder - in a real scenario, parse the ID from the response
+
+        return objectMapper.readValue(result.getResponse().getContentAsString(), ServiceRequest.class).getId();
     }
 
     private String getAuthToken(String username) throws Exception {
@@ -99,16 +103,16 @@ class ServiceRequestControllerTest {
         // User A creates a request
         ServiceRequest newRequest = new ServiceRequest();
         newRequest.setTitle("Initial Title");
-        newRequest.setUserId(1L);
+        newRequest.setUserId(userAId);
         MvcResult result = mockMvc.perform(post("/api/requests").header("Authorization", "Bearer " + userAToken).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(newRequest))).andReturn();
-        ServiceRequest createdRequest = objectMapper.readValue(result.getResponse().getContentAsString(), ServiceRequest.class);
+        ServiceRequest serviceRequest = objectMapper.readValue(result.getResponse().getContentAsString(), ServiceRequest.class);
 
         // User A updates it
-        createdRequest.setTitle("Updated Title");
-        mockMvc.perform(put("/api/requests/" + createdRequest.getId())
+        newRequest.setTitle("Updated Title");
+        mockMvc.perform(put("/api/requests/" + serviceRequest.getId())
                         .header("Authorization", "Bearer " + userAToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createdRequest)))
+                        .content(objectMapper.writeValueAsString(newRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Updated Title"));
     }
@@ -129,5 +133,55 @@ class ServiceRequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createdRequest)))
                 .andExpect(status().isInternalServerError()); // Expecting a security exception
+    }
+
+    @Test
+    void testDeleteRequest_Success() throws Exception {
+        // User A creates a request
+        ServiceRequest newRequest = new ServiceRequest();
+        newRequest.setTitle("To be deleted");
+        newRequest.setUserId(userAId);
+        MvcResult result = mockMvc.perform(post("/api/requests").header("Authorization", "Bearer " + userAToken).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(newRequest))).andReturn();
+        ServiceRequest serviceRequest = objectMapper.readValue(result.getResponse().getContentAsString(), ServiceRequest.class);
+        // User A deletes it
+        mockMvc.perform(delete("/api/requests/" + serviceRequest.getId())
+                        .header("Authorization", "Bearer " + userAToken))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void testDeleteRequest_Forbidden() throws Exception {
+        // User A creates a request
+        ServiceRequest newRequest = new ServiceRequest();
+        newRequest.setTitle("User A's Request to delete");
+        newRequest.setUserId(1L);
+        MvcResult result = mockMvc.perform(post("/api/requests").header("Authorization", "Bearer " + userAToken).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(newRequest))).andReturn();
+        ServiceRequest createdRequest = objectMapper.readValue(result.getResponse().getContentAsString(), ServiceRequest.class);
+
+        // User B tries to delete it
+        mockMvc.perform(delete("/api/requests/" + createdRequest.getId())
+                        .header("Authorization", "Bearer " + userBToken))
+                .andExpect(status().isInternalServerError()); // Expecting a security exception
+    }
+
+    @Test
+    void testGetAllRequests() throws Exception {
+        mockMvc.perform(get("/api/requests")
+                        .header("Authorization", "Bearer " + userAToken)
+                        .param("page", "1")
+                        .param("size", "5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    void getRequestsByUserId() throws Exception {
+        // userAId is not correctly populated in the current test setup, so we will use a placeholder.
+        // In a real scenario, the ID should be parsed from the user registration response.
+        Long userIdToQuery = 1L;
+        mockMvc.perform(get("/api/requests/user/" + userIdToQuery)
+                        .header("Authorization", "Bearer " + userAToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
     }
 }

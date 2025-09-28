@@ -4,17 +4,16 @@ import bupt.goodservice.dto.MonthlyStats;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.time.YearMonth;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
 public interface StatsMapper {
 
-    List<MonthlyStats> getMonthlyStats(
-            @Param("startMonth") YearMonth startMonth,
-            @Param("endMonth") YearMonth endMonth,
-            @Param("region") String region, // Assuming region is identified by name for simplicity
-            @Param("sortBy") String sortBy,
-            @Param("sortOrder") String sortOrder
+    List<MonthlyStats> getMonthlyStatsTotal(
+            @Param("first") LocalDateTime first,
+            @Param("last") LocalDateTime last,
+            @Param("region") String region,
+            @Param("success") boolean success
     );
 }

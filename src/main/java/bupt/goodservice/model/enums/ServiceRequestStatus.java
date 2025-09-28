@@ -3,6 +3,7 @@ package bupt.goodservice.model.enums;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ServiceRequestStatus {
+    COMPLETED(1),
     PUBLISHED(0),
     CANCELLED(-1);
 

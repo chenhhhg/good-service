@@ -6,6 +6,7 @@ import bupt.goodservice.service.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -16,19 +17,16 @@ public class StatsServiceImpl implements StatsService {
     private StatsMapper statsMapper;
 
     @Override
-    public List<MonthlyStats> getMonthlyStats(YearMonth startMonth, YearMonth endMonth, String region, String sortBy, String sortOrder) {
-        // You might want to set default values if they are null
+    public List<MonthlyStats> getMonthlyStats(YearMonth startMonth, YearMonth endMonth, String region, boolean success) {
         if (startMonth == null) {
             startMonth = YearMonth.now().minusMonths(6);
         }
         if (endMonth == null) {
             endMonth = YearMonth.now();
         }
-        // Basic validation to prevent SQL injection for sortOrder
-        if (sortOrder != null && !sortOrder.equalsIgnoreCase("asc") && !sortOrder.equalsIgnoreCase("desc")) {
-            sortOrder = "asc"; // default to asc if invalid value is provided
-        }
-        
-        return statsMapper.getMonthlyStats(startMonth, endMonth, region, sortBy, sortOrder);
+        LocalDateTime start = startMonth.atDay(1).atStartOfDay();
+        LocalDateTime end = endMonth.atEndOfMonth().atTime(23, 59, 59, 999000000);
+        List<MonthlyStats> monthlyStats = statsMapper.getMonthlyStatsTotal(start, end, region, success);
+        return monthlyStats;
     }
 }

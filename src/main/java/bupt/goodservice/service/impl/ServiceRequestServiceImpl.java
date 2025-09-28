@@ -81,7 +81,9 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
         if (!responses.isEmpty()) {
             throw new IllegalStateException("Cannot delete a service request that already has responses.");
         }
-        
-        serviceRequestMapper.delete(id);
+
+        existingRequest.setStatus(ServiceRequestStatus.CANCELLED);
+        serviceRequestMapper.update(existingRequest);
+//        serviceRequestMapper.delete(id);
     }
 }

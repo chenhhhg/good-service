@@ -61,6 +61,34 @@ class AuthControllerTest {
     }
 
     @Test
+    void testRegisterUser_InvalidPassword_TooShort() throws Exception {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("shortpass");
+        registerRequest.setPassword("a1"); // Too short
+        registerRequest.setName("Test User");
+        registerRequest.setPhone("12345678901");
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegisterUser_InvalidPassword_NoNumbers() throws Exception {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("nopass");
+        registerRequest.setPassword("password"); // No numbers
+        registerRequest.setName("Test User");
+        registerRequest.setPhone("12345678901");
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void testLoginUser_Success() throws Exception {
         // First, register a user
         RegisterRequest registerRequest = new RegisterRequest();

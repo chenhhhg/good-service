@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.security.Principal;
-
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
 
@@ -26,13 +24,16 @@ public class JwtInterceptor implements HandlerInterceptor {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             try {
+                if (jwtUtils.isTokenExpired(token)) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token Expired");
+                    return false;
+                }
                 String username = jwtUtils.getUsernameFromToken(token);
                 Long userId = jwtUtils.getUserIdFromToken(token);
+                Long type = jwtUtils.getUserTypeFromToken(token);
                 request.setAttribute("username", username);
                 request.setAttribute("userId", userId);
-                
-                // For Principal object
-                request.setAttribute("principal", (Principal) () -> username);
+                request.setAttribute("userType", type);
                 
                 return true;
             } catch (Exception e) {

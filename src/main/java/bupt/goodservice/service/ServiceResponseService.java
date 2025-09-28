@@ -2,6 +2,7 @@ package bupt.goodservice.service;
 
 import bupt.goodservice.model.ServiceResponse;
 import bupt.goodservice.model.enums.ServiceResponseStatus;
+
 import java.util.List;
 
 public interface ServiceResponseService {
@@ -12,5 +13,6 @@ public interface ServiceResponseService {
     List<ServiceResponse> getAllResponses(int page, int size);
     ServiceResponse updateServiceResponse(Long id, ServiceResponse serviceResponse);
     void deleteServiceResponse(Long id);
-    ServiceResponse updateResponseStatus(Long responseId, ServiceResponseStatus status, Long currentUserId);
+
+    ServiceResponse acceptOrRejectResponse(Long responseId, Long requestId, ServiceResponseStatus status, Long currentUserId);
 }

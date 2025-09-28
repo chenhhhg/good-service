@@ -2,6 +2,7 @@ package bupt.goodservice.controller;
 
 import bupt.goodservice.aspect.CheckOwnership;
 import bupt.goodservice.model.ServiceRequest;
+import bupt.goodservice.model.enums.ServiceType;
 import bupt.goodservice.service.ServiceRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -62,5 +63,11 @@ public class ServiceRequestController {
     public ResponseEntity<Void> deleteRequest(@PathVariable Long id) {
         serviceRequestService.deleteServiceRequest(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/types")
+    public ResponseEntity<String[]> getAllServiceTypes() {
+        String[] names = ServiceType.getAllChineseNames();
+        return ResponseEntity.ok(names);
     }
 }
