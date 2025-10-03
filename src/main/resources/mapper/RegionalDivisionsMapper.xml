@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="bupt.goodservice.mapper.RegionalDivisionsMapper">
 
-    <resultMap id="BaseResultMap" type="bupt.goodservice.model.RegionalDivisions">
+    <resultMap id="BaseResultMap" type="bupt.goodservice.model.RegionalDivision">
         <id property="id" column="id" jdbcType="INTEGER"/>
         <result property="regionalCode" column="regional_code" jdbcType="VARCHAR"/>
         <result property="regionalName" column="regional_name" jdbcType="VARCHAR"/>
@@ -31,13 +31,17 @@
         from regional_divisions
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="selectAllEntity" resultType="bupt.goodservice.model.RegionalDivision">
+        select *
+        from regional_divisions
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete
         from regional_divisions
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="bupt.goodservice.model.RegionalDivisions"
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="bupt.goodservice.model.RegionalDivision"
             useGeneratedKeys="true">
         insert into regional_divisions
         ( id, regional_code, regional_name
@@ -48,7 +52,7 @@
                , #{updatedTime,jdbcType=TIMESTAMP})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id"
-            parameterType="bupt.goodservice.model.RegionalDivisions" useGeneratedKeys="true">
+            parameterType="bupt.goodservice.model.RegionalDivision" useGeneratedKeys="true">
         insert into regional_divisions
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -69,7 +73,7 @@
             <if test="updatedTime != null">#{updatedTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="bupt.goodservice.model.RegionalDivisions">
+    <update id="updateByPrimaryKeySelective" parameterType="bupt.goodservice.model.RegionalDivision">
         update regional_divisions
         <set>
             <if test="regionalCode != null">
@@ -93,7 +97,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="bupt.goodservice.model.RegionalDivisions">
+    <update id="updateByPrimaryKey" parameterType="bupt.goodservice.model.RegionalDivision">
         update regional_divisions
         set regional_code = #{regionalCode,jdbcType=VARCHAR},
             regional_name = #{regionalName,jdbcType=VARCHAR},

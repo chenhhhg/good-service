@@ -1,7 +1,9 @@
 package bupt.goodservice.service.impl;
 
+import bupt.goodservice.mapper.RegionalDivisionsMapper;
 import bupt.goodservice.mapper.ServiceRequestMapper;
 import bupt.goodservice.mapper.ServiceResponseMapper;
+import bupt.goodservice.model.RegionalDivision;
 import bupt.goodservice.model.ServiceRequest;
 import bupt.goodservice.model.ServiceResponse;
 import bupt.goodservice.model.enums.ServiceRequestStatus;
@@ -20,6 +22,9 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
 
     @Autowired
     private ServiceResponseMapper serviceResponseMapper;
+
+    @Autowired
+    private RegionalDivisionsMapper regionalDivisionsMapper;
 
     @Override
     public ServiceRequest createServiceRequest(ServiceRequest serviceRequest) {
@@ -84,5 +89,10 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
         existingRequest.setStatus(ServiceRequestStatus.CANCELLED);
         serviceRequestMapper.update(existingRequest);
 //        serviceRequestMapper.delete(id);
+    }
+
+    @Override
+    public List<RegionalDivision> getAllRegions() {
+        return regionalDivisionsMapper.selectAllEntity();
     }
 }

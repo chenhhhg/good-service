@@ -1,6 +1,7 @@
 package bupt.goodservice.controller;
 
 import bupt.goodservice.aspect.CheckOwnership;
+import bupt.goodservice.model.RegionalDivision;
 import bupt.goodservice.model.ServiceRequest;
 import bupt.goodservice.model.enums.ServiceType;
 import bupt.goodservice.service.ServiceRequestService;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/requests")
@@ -70,5 +73,22 @@ public class ServiceRequestController {
     public ResponseEntity<String[]> getAllServiceTypes() {
         String[] names = ServiceType.getAllChineseNames();
         return ResponseEntity.ok(names);
+    }
+
+    @GetMapping("/regions")
+    public ResponseEntity<Map<String, Map<String, Map<String, String>>>> getAllRegions() {
+        List<RegionalDivision> r = serviceRequestService.getAllRegions();
+        Map<String, Map<String, Map<String, String>>> map = new HashMap<>();
+        for (RegionalDivision region : r) {
+            String provinceName = region.getProvinceName();
+            map.computeIfAbsent(provinceName, s -> new HashMap<>());
+            Map<String, Map<String, String>> pMap = map.get(provinceName);
+            String cityName = region.getCityName();
+            pMap.computeIfAbsent(cityName, s -> new HashMap<>());
+            Map<String, String> cMap = pMap.get(cityName);
+            String regionalName = region.getRegionalName();
+            cMap.put(regionalName, region.getRegionalCode());
+        }
+        return ResponseEntity.ok(map);
     }
 }

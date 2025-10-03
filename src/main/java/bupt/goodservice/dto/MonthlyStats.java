@@ -1,12 +1,12 @@
 package bupt.goodservice.dto;
 
-import bupt.goodservice.model.RegionalDivisions;
+import bupt.goodservice.model.RegionalDivision;
 import lombok.Data;
 
 @Data
 public class MonthlyStats {
     private String month; // YYYY-MM
-    private RegionalDivisions region;
+    private RegionalDivision region;
     private String serviceType;
     private Long requestCount;
     private Long successCount;

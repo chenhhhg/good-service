@@ -11,7 +11,7 @@ import java.util.Date;
  * @TableName regional_divisions
  */
 @Data
-public class RegionalDivisions implements Serializable {
+public class RegionalDivision implements Serializable {
     private static final long serialVersionUID = 1L;
     /**
      * 主键ID
@@ -53,7 +53,7 @@ public class RegionalDivisions implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        RegionalDivisions other = (RegionalDivisions) that;
+        RegionalDivision other = (RegionalDivision) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getRegionalCode() == null ? other.getRegionalCode() == null : this.getRegionalCode().equals(other.getRegionalCode()))
                 && (this.getRegionalName() == null ? other.getRegionalName() == null : this.getRegionalName().equals(other.getRegionalName()))

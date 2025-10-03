@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.findByUsername(loginRequest.getUsername());
 
         if (user == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new RuntimeException("用户不存在或密码错误！");
         }
 
         return jwtUtils.generateToken(user);

@@ -16,8 +16,8 @@
         <result property="requestCount" column="total_requests" jdbcType="BIGINT"/>
         <result property="successCount" column="successful_requests" jdbcType="BIGINT"/>
 
-        <!-- 嵌套的 RegionalDivisions 对象映射 -->
-        <association property="region" javaType="bupt.goodservice.model.RegionalDivisions">
+        <!-- 嵌套的 RegionalDivision 对象映射 -->
+        <association property="region" javaType="bupt.goodservice.model.RegionalDivision">
             <id property="id" column="region_id" jdbcType="INTEGER"/>
             <result property="regionalCode" column="regional_code" jdbcType="VARCHAR"/>
             <result property="regionalName" column="regional_name" jdbcType="VARCHAR"/>
