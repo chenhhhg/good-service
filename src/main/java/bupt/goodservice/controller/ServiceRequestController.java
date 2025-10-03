@@ -76,18 +76,18 @@ public class ServiceRequestController {
     }
 
     @GetMapping("/regions")
-    public ResponseEntity<Map<String, Map<String, Map<String, String>>>> getAllRegions() {
+    public ResponseEntity<Map<String, Map<String, Map<String, Integer>>>> getAllRegions() {
         List<RegionalDivision> r = serviceRequestService.getAllRegions();
-        Map<String, Map<String, Map<String, String>>> map = new HashMap<>();
+        Map<String, Map<String, Map<String, Integer>>> map = new HashMap<>();
         for (RegionalDivision region : r) {
             String provinceName = region.getProvinceName();
             map.computeIfAbsent(provinceName, s -> new HashMap<>());
-            Map<String, Map<String, String>> pMap = map.get(provinceName);
+            Map<String, Map<String, Integer>> pMap = map.get(provinceName);
             String cityName = region.getCityName();
             pMap.computeIfAbsent(cityName, s -> new HashMap<>());
-            Map<String, String> cMap = pMap.get(cityName);
+            Map<String, Integer> cMap = pMap.get(cityName);
             String regionalName = region.getRegionalName();
-            cMap.put(regionalName, region.getRegionalCode());
+            cMap.put(regionalName, region.getId());
         }
         return ResponseEntity.ok(map);
     }
