@@ -88,6 +88,9 @@
             <if test="title != null">title = #{title},</if>
             <if test="description != null">description = #{description},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="imageFiles != null">image_files = #{imageFiles},</if>
+            <if test="videoFile != null">video_file,</if>
+            <if test="regionId != null">regionId,</if>
             update_time = #{updatedAt}
         </set>
         WHERE id = #{id}

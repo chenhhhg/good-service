@@ -56,6 +56,7 @@
             <if test="description != null">description = #{description},</if>
             <if test="imageFiles != null">image_files = #{imageFiles},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="imageFiles != null">image_files = #{imageFiles},</if>
             update_time = #{updatedAt}
         </set>
         WHERE id = #{id}
