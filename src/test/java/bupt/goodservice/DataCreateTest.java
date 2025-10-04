@@ -1,6 +1,7 @@
 package bupt.goodservice;
 
 import bupt.goodservice.dto.RegisterRequest;
+import bupt.goodservice.dto.ServiceResponses;
 import bupt.goodservice.mapper.RegionalDivisionsMapper;
 import bupt.goodservice.mapper.ServiceRequestMapper;
 import bupt.goodservice.mapper.ServiceResponseMapper;
@@ -148,12 +149,12 @@ public class DataCreateTest {
             if (!byId.getStatus().equals(ServiceRequestStatus.PUBLISHED)) {
                 continue;
             }
-            List<ServiceResponse> responseList = responseService.getServiceResponsesByRequestId(requestId, 1, 1000);
-            if (responseList.isEmpty()) {
+            ServiceResponses responses = responseService.getServiceResponsesByRequestId(requestId, 1, 1000);
+            if (responses.getData().isEmpty()) {
                 continue;
             }
             long responseId = -1;
-            for (ServiceResponse response : responseList) {
+            for (ServiceResponse response : responses.getData()) {
                 if (response.getStatus().equals(ServiceResponseStatus.PENDING)) {
                     responseId = response.getId();
                     break;
