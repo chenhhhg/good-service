@@ -16,4 +16,6 @@ public interface ServiceRequestService {
     List<RegionalDivision> getAllRegions();
 
     Integer getAllServiceRequestsCount(String serviceType, Long regionId);
+
+    Integer getAllServiceRequestsByUserIdCount(Long userId);
 }

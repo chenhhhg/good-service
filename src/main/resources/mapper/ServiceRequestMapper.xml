@@ -63,6 +63,9 @@
             <if test="regionId != null">
                 AND region_id = #{regionId}
             </if>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
         </where>
     </select>
 

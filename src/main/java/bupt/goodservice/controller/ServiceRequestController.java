@@ -64,16 +64,22 @@ public class ServiceRequestController {
         ServiceRequests serviceRequests = new ServiceRequests();
         serviceRequests.setData(requests);
         Integer cnt = serviceRequestService.getAllServiceRequestsCount(serviceType, regionId);
+        serviceRequests.setTotal(cnt);
         return ResponseEntity.ok(serviceRequests);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<ServiceRequest>> getRequestsByUserId(
+    public ResponseEntity<ServiceRequests> getRequestsByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         List<ServiceRequest> requests = serviceRequestService.getServiceRequestsByUserId(userId, page, size);
-        return ResponseEntity.ok(requests);
+        User byId = userService.getById(userId);
+        for (ServiceRequest request : requests) {
+            request.setUser(byId);
+        }
+        Integer cnt = serviceRequestService.getAllServiceRequestsByUserIdCount(userId);
+        return ResponseEntity.ok(new ServiceRequests(cnt, requests));
     }
 
     @PutMapping("/{id}")

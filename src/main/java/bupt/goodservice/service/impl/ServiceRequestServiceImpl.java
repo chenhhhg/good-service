@@ -100,4 +100,9 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
     public Integer getAllServiceRequestsCount(String serviceType, Long regionId) {
         return serviceRequestMapper.countAll(serviceType, regionId);
     }
+
+    @Override
+    public Integer getAllServiceRequestsByUserIdCount(Long userId) {
+        return serviceRequestMapper.countAll(userId);
+    }
 }

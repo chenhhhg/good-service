@@ -18,4 +18,6 @@ public interface ServiceRequestMapper {
     void delete(Long id);
 
     Integer countAll(String serviceType, Long regionId);
+
+    Integer countAll(Long userId);
 }
