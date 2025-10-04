@@ -4,8 +4,10 @@ import bupt.goodservice.dto.ServiceResponseDto;
 import bupt.goodservice.dto.ServiceResponses;
 import bupt.goodservice.mapper.ServiceRequestMapper;
 import bupt.goodservice.mapper.ServiceResponseMapper;
+import bupt.goodservice.mapper.UserMapper;
 import bupt.goodservice.model.ServiceRequest;
 import bupt.goodservice.model.ServiceResponse;
+import bupt.goodservice.model.User;
 import bupt.goodservice.model.enums.ServiceRequestStatus;
 import bupt.goodservice.model.enums.ServiceResponseStatus;
 import bupt.goodservice.service.ServiceResponseService;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,6 +30,9 @@ public class ServiceResponseServiceImpl implements ServiceResponseService {
 
     @Autowired
     private ServiceRequestMapper serviceRequestMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public ServiceResponse createServiceResponse(ServiceResponse serviceResponse) {
@@ -79,7 +86,22 @@ public class ServiceResponseServiceImpl implements ServiceResponseService {
             return dto;
         }).collect(Collectors.toList());
 
-        return new ServiceResponses(total, dtoList);
+        ServiceResponses built = new ServiceResponses(total, dtoList);
+
+        HashMap<Long, List<ServiceResponseDto>> map = new HashMap<>();
+        for (ServiceResponseDto dto : built.getData()) {
+            map.computeIfAbsent(dto.getUserId(), d -> new ArrayList<>());
+            map.get(dto.getUserId()).add(dto);
+        }
+        List<User> batchById = userMapper.findBatchById(map.keySet());
+        for (User user : batchById) {
+            user.setPassword(null);
+            List<ServiceResponseDto> list = map.get(user.getId());
+            for (ServiceResponseDto dto : list) {
+                dto.setUser(user);
+            }
+        }
+        return built;
     }
 
     @Override
