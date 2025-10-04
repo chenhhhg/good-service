@@ -51,11 +51,14 @@ public class ServiceRequestController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         List<ServiceRequest> requests = serviceRequestService.getAllServiceRequests(serviceType, regionId, page, size);
-        Map<Long, ServiceRequest> map = requests.stream().collect(Collectors.toMap(ServiceRequest::getUserId, r -> r));
+        Map<Long, List<ServiceRequest>> map = requests.stream()
+                .collect(Collectors.groupingBy(ServiceRequest::getUserId));
         List<User> users = userService.getBatchById(map.keySet());
         for (User user : users) {
             user.setPassword(null);
-            map.get(user.getId()).setUser(user);
+            for (ServiceRequest request : map.get(user.getId())) {
+                request.setUser(user);
+            }
         }
         return ResponseEntity.ok(requests);
     }
