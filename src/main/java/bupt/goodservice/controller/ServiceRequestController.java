@@ -3,8 +3,10 @@ package bupt.goodservice.controller;
 import bupt.goodservice.aspect.CheckOwnership;
 import bupt.goodservice.model.RegionalDivision;
 import bupt.goodservice.model.ServiceRequest;
+import bupt.goodservice.model.User;
 import bupt.goodservice.model.enums.ServiceType;
 import bupt.goodservice.service.ServiceRequestService;
+import bupt.goodservice.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/requests")
@@ -20,6 +23,8 @@ public class ServiceRequestController {
 
     @Autowired
     private ServiceRequestService serviceRequestService;
+    @Autowired
+    private UserService userService;
 
     @PostMapping
     public ResponseEntity<ServiceRequest> createRequest(@Valid @RequestBody ServiceRequest serviceRequest) {
@@ -33,6 +38,9 @@ public class ServiceRequestController {
         if (serviceRequest == null) {
             return ResponseEntity.notFound().build();
         }
+        User user = userService.getById(serviceRequest.getUserId());
+        user.setPassword(null);
+        serviceRequest.setUser(user);
         return ResponseEntity.ok(serviceRequest);
     }
 
@@ -43,6 +51,12 @@ public class ServiceRequestController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         List<ServiceRequest> requests = serviceRequestService.getAllServiceRequests(serviceType, regionId, page, size);
+        Map<Long, ServiceRequest> map = requests.stream().collect(Collectors.toMap(ServiceRequest::getUserId, r -> r));
+        List<User> users = userService.getBatchById(map.keySet());
+        for (User user : users) {
+            user.setPassword(null);
+            map.get(user.getId()).setUser(user);
+        }
         return ResponseEntity.ok(requests);
     }
 

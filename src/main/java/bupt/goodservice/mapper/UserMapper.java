@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper
 public interface UserMapper {
@@ -13,4 +14,8 @@ public interface UserMapper {
     void insert(User user);
     void update(User user);
     List<User> findAll(@Param("offset") int offset, @Param("pageSize") int pageSize);
+
+    User findById(Long userId);
+
+    List<User> findBatchById(@Param("ids") Set<Long> ids);
 }

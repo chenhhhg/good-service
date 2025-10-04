@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -88,5 +89,15 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers(int page, int size) {
         int offset = (page - 1) * size;
         return userMapper.findAll(offset, size);
+    }
+
+    @Override
+    public User getById(Long userId) {
+        return userMapper.findById(userId);
+    }
+
+    @Override
+    public List<User> getBatchById(Set<Long> ids) {
+        return userMapper.findBatchById(ids);
     }
 }

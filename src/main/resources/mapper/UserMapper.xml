@@ -31,5 +31,17 @@
         SELECT * FROM user
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
+    <select id="findById" resultType="bupt.goodservice.model.User">
+        select *
+        FROM user
+        where id = #{id}
+    </select>
+    <select id="findBatchById" resultType="bupt.goodservice.model.User">
+        SELECT * FROM user
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 
 </mapper>

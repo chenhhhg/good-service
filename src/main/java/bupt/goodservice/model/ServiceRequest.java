@@ -13,6 +13,7 @@ public class ServiceRequest {
     private Long id;
     @NotNull
     private Long userId;
+    private User user;
     @NotNull(message = "必须填写区域")
     private Long regionId;
     @NotBlank(message = "必须填写服务类型")
