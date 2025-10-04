@@ -68,7 +68,10 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
         existingRequest.setTitle(serviceRequest.getTitle());
         existingRequest.setDescription(serviceRequest.getDescription());
         existingRequest.setUpdatedAt(LocalDateTime.now());
-        
+        existingRequest.setImageFiles(serviceRequest.getImageFiles());
+        existingRequest.setVideoFile(serviceRequest.getVideoFile());
+        existingRequest.setRegionId(serviceRequest.getRegionId());
+
         serviceRequestMapper.update(existingRequest);
         return existingRequest;
     }
