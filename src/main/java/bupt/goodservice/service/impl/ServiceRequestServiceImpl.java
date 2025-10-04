@@ -71,6 +71,7 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
         existingRequest.setImageFiles(serviceRequest.getImageFiles());
         existingRequest.setVideoFile(serviceRequest.getVideoFile());
         existingRequest.setRegionId(serviceRequest.getRegionId());
+        existingRequest.setServiceType(serviceRequest.getServiceType());
 
         serviceRequestMapper.update(existingRequest);
         return existingRequest;
