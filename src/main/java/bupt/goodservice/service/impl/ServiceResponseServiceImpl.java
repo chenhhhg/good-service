@@ -125,6 +125,8 @@ public class ServiceResponseServiceImpl implements ServiceResponseService {
         existingResponse.setDescription(serviceResponse.getDescription());
         existingResponse.setImageFiles(serviceResponse.getImageFiles());
         existingResponse.setUpdatedAt(LocalDateTime.now());
+        existingResponse.setImageFiles(serviceResponse.getImageFiles());
+
         // Potentially update status
         if (serviceResponse.getStatus() != null) {
             existingResponse.setStatus(serviceResponse.getStatus());
