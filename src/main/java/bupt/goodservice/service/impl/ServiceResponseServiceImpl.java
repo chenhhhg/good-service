@@ -1,5 +1,7 @@
 package bupt.goodservice.service.impl;
 
+import bupt.goodservice.dto.ServiceResponseDto;
+import bupt.goodservice.dto.ServiceResponses;
 import bupt.goodservice.mapper.ServiceRequestMapper;
 import bupt.goodservice.mapper.ServiceResponseMapper;
 import bupt.goodservice.model.ServiceRequest;
@@ -13,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ServiceResponseServiceImpl implements ServiceResponseService {
@@ -38,15 +42,44 @@ public class ServiceResponseServiceImpl implements ServiceResponseService {
     }
 
     @Override
-    public List<ServiceResponse> getServiceResponsesByRequestId(Long requestId, int page, int size) {
+    public ServiceResponses getServiceResponsesByRequestId(Long requestId, int page, int size) {
         int offset = (page - 1) * size;
-        return serviceResponseMapper.findByRequestId(requestId, offset, size);
+        List<ServiceResponse> responses = serviceResponseMapper.findByRequestId(requestId, offset, size);
+        Integer total = serviceResponseMapper.countByRequestId(requestId);
+        return buildServiceResponses(responses, total);
     }
 
     @Override
-    public List<ServiceResponse> getServiceResponsesByUserId(Long userId, int page, int size) {
+    public ServiceResponses getServiceResponsesByUserId(Long userId, int page, int size) {
         int offset = (page - 1) * size;
-        return serviceResponseMapper.findByUserId(userId, offset, size);
+        List<ServiceResponse> responses = serviceResponseMapper.findByUserId(userId, offset, size);
+        Integer total = serviceResponseMapper.countByUserId(userId);
+        return buildServiceResponses(responses, total);
+    }
+
+    private ServiceResponses buildServiceResponses(List<ServiceResponse> responses, Integer total) {
+        if (responses.isEmpty()) {
+            return new ServiceResponses(0, List.of());
+        }
+        List<Long> requestIds = responses.stream().map(ServiceResponse::getRequestId).distinct().collect(Collectors.toList());
+        List<ServiceRequest> requests = serviceRequestMapper.findByIds(requestIds);
+        Map<Long, ServiceRequest> requestMap = requests.stream().collect(Collectors.toMap(ServiceRequest::getId, r -> r));
+
+        List<ServiceResponseDto> dtoList = responses.stream().map(response -> {
+            ServiceResponseDto dto = new ServiceResponseDto();
+            dto.setId(response.getId());
+            dto.setRequestId(response.getRequestId());
+            dto.setUserId(response.getUserId());
+            dto.setDescription(response.getDescription());
+            dto.setImageFiles(response.getImageFiles());
+            dto.setCreatedAt(response.getCreatedAt());
+            dto.setUpdatedAt(response.getUpdatedAt());
+            dto.setStatus(response.getStatus());
+            dto.setRequest(requestMap.get(response.getRequestId()));
+            return dto;
+        }).collect(Collectors.toList());
+
+        return new ServiceResponses(total, dtoList);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package bupt.goodservice.controller;
 
 import bupt.goodservice.aspect.CheckOwnership;
+import bupt.goodservice.dto.ServiceResponses;
 import bupt.goodservice.model.ServiceResponse;
 import bupt.goodservice.model.enums.ServiceResponseStatus;
 import bupt.goodservice.service.ServiceResponseService;
@@ -10,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/responses")
@@ -38,20 +37,20 @@ public class ServiceResponseController {
     }
 
     @GetMapping("/request/{requestId}")
-    public ResponseEntity<List<ServiceResponse>> getResponsesByRequestId(
+    public ResponseEntity<ServiceResponses> getResponsesByRequestId(
             @PathVariable Long requestId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        List<ServiceResponse> responses = serviceResponseService.getServiceResponsesByRequestId(requestId, page, size);
+        ServiceResponses responses = serviceResponseService.getServiceResponsesByRequestId(requestId, page, size);
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<ServiceResponse>> getResponsesByUserId(
+    public ResponseEntity<ServiceResponses> getResponsesByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        List<ServiceResponse> responses = serviceResponseService.getServiceResponsesByUserId(userId, page, size);
+        ServiceResponses responses = serviceResponseService.getServiceResponsesByUserId(userId, page, size);
         return ResponseEntity.ok(responses);
     }
 

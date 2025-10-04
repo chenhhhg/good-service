@@ -17,4 +17,8 @@ public interface ServiceResponseMapper {
     List<ServiceResponse> findAll(@Param("offset") int offset, @Param("pageSize") int pageSize);
     void update(ServiceResponse serviceResponse);
     void delete(Long id);
+
+    Integer countByRequestId(@Param("requestId") Long requestId);
+
+    Integer countByUserId(@Param("userId") Long userId);
 }

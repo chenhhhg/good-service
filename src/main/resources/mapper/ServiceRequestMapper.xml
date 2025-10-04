@@ -37,6 +37,14 @@
         update
     </select>
 
+    <select id="findByIds" resultMap="ServiceRequestResult">
+        SELECT * FROM service_request
+        WHERE id IN
+        <foreach item="item" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
     <select id="findByUserId" resultMap="ServiceRequestResult">
         SELECT * FROM service_request WHERE user_id = #{userId}
         LIMIT #{pageSize} OFFSET #{offset}

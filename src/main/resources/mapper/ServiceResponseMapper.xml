@@ -65,4 +65,16 @@
         DELETE FROM service_response WHERE id = #{id}
     </delete>
 
+    <select id="countByRequestId" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM service_response
+        WHERE request_id = #{requestId}
+    </select>
+
+    <select id="countByUserId" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM service_response
+        WHERE user_id = #{userId}
+    </select>
+
 </mapper>
