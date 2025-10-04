@@ -1,6 +1,7 @@
 package bupt.goodservice.controller;
 
 import bupt.goodservice.aspect.CheckOwnership;
+import bupt.goodservice.dto.ServiceRequests;
 import bupt.goodservice.model.RegionalDivision;
 import bupt.goodservice.model.ServiceRequest;
 import bupt.goodservice.model.User;
@@ -45,7 +46,7 @@ public class ServiceRequestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ServiceRequest>> getAllRequests(
+    public ResponseEntity<ServiceRequests> getAllRequests(
             @RequestParam(required = false) String serviceType,
             @RequestParam(required = false) Long regionId,
             @RequestParam(defaultValue = "1") int page,
@@ -60,7 +61,10 @@ public class ServiceRequestController {
                 request.setUser(user);
             }
         }
-        return ResponseEntity.ok(requests);
+        ServiceRequests serviceRequests = new ServiceRequests();
+        serviceRequests.setData(requests);
+        Integer cnt = serviceRequestService.getAllServiceRequestsCount(serviceType, regionId);
+        return ResponseEntity.ok(serviceRequests);
     }
 
     @GetMapping("/user/{userId}")
@@ -108,4 +112,6 @@ public class ServiceRequestController {
         }
         return ResponseEntity.ok(map);
     }
+
+
 }

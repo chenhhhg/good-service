@@ -16,4 +16,6 @@ public interface ServiceRequestMapper {
     List<ServiceRequest> findAll(@Param("serviceType") String serviceType, @Param("regionId") Long regionId, @Param("offset") int offset, @Param("pageSize") int pageSize);
     void update(ServiceRequest serviceRequest);
     void delete(Long id);
+
+    Integer countAll(String serviceType, Long regionId);
 }

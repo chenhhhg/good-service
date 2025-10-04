@@ -46,13 +46,24 @@
         SELECT * FROM service_request
         <where>
             <if test="serviceType != null and serviceType != ''">
-                AND service_type LIKE CONCAT('%', #{serviceType}, '%')
+                AND service_type = #{serviceType}
             </if>
             <if test="regionId != null">
                 AND region_id = #{regionId}
             </if>
         </where>
         LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="countAll" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM service_request
+        <where>
+            <if test="serviceType != null and serviceType != ''">
+                AND service_type = #{serviceType}
+            </if>
+            <if test="regionId != null">
+                AND region_id = #{regionId}
+            </if>
+        </where>
     </select>
 
     <update id="update">

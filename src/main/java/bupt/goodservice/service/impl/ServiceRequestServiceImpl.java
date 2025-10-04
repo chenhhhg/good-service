@@ -95,4 +95,9 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
     public List<RegionalDivision> getAllRegions() {
         return regionalDivisionsMapper.selectAllEntity();
     }
+
+    @Override
+    public Integer getAllServiceRequestsCount(String serviceType, Long regionId) {
+        return serviceRequestMapper.countAll(serviceType, regionId);
+    }
 }

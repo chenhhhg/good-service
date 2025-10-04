@@ -26,5 +26,4 @@ public interface RegionalDivisionsMapper {
     int updateByPrimaryKeySelective(RegionalDivision record);
 
     int updateByPrimaryKey(RegionalDivision record);
-
 }

@@ -14,4 +14,6 @@ public interface ServiceRequestService {
     void deleteServiceRequest(Long id);
 
     List<RegionalDivision> getAllRegions();
+
+    Integer getAllServiceRequestsCount(String serviceType, Long regionId);
 }
