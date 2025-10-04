@@ -103,6 +103,6 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
 
     @Override
     public Integer getAllServiceRequestsByUserIdCount(Long userId) {
-        return serviceRequestMapper.countAll(userId);
+        return serviceRequestMapper.countAllByUserId(userId);
     }
 }

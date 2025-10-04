@@ -19,5 +19,5 @@ public interface ServiceRequestMapper {
 
     Integer countAll(String serviceType, Long regionId);
 
-    Integer countAll(Long userId);
+    Integer countAllByUserId(Long userId);
 }

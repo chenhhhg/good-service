@@ -63,6 +63,11 @@
             <if test="regionId != null">
                 AND region_id = #{regionId}
             </if>
+        </where>
+    </select>
+    <select id="countAllByUserId" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM service_request
+        <where>
             <if test="userId != null">
                 AND user_id = #{userId}
             </if>
